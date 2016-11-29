@@ -11,13 +11,7 @@ import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
@@ -35,33 +29,31 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
-import vos2.*;
 import vos.*;
+import vos2.*;
 
-
-public class VuelosMDB implements MessageListener, ExceptionListener 
+public class AerolineasMDB implements MessageListener, ExceptionListener
 {
 	public final static int TIME_OUT = 5;
-	private final static String APP = "app1";
-	
-	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllVideos";
-	private final static String LOCAL_TOPIC_NAME = "java:global/RMQAllVideosLocal";
-	
+	private final static String APP = "D03";
+
+	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicIngresoAerolineas";
+	private final static String LOCAL_TOPIC_NAME = "java:global/RMQIngresoAerolineasLocal";
+
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
-	
+
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
 	private Topic globalTopic;
 	private Topic localTopic;
-	
-	private List<Vuelo> answer = new ArrayList<Vuelo>();
-	
-	public VuelosMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+
+	private List<Aerolinea> answer = new ArrayList<Aerolinea>();
+
+	public AerolineasMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -73,56 +65,54 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		topicSubscriber.setMessageListener(this);
 		topicConnection.setExceptionListener(this);
 	}
-	
+
 	public void start() throws JMSException
 	{
 		topicConnection.start();
 	}
-	
+
 	public void close() throws JMSException
 	{
 		topicSession.close();
 		topicConnection.close();
 	}
-	
-	public ArrayList<Vuelo> getVuelosRemote() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+
+	public ListaAerolineas getRemoteAerolineas() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
-//		id = new String(md.digest(id.getBytes()));
-		
+		//		id = new String(md.digest(id.getBytes()));
+
 		sendMessage("", REQUEST, globalTopic, id);
 		boolean waiting = true;
 
 		int count = 0;
-		while(TIME_OUT != count)
-		{
+		while(TIME_OUT != count){
 			TimeUnit.SECONDS.sleep(1);
 			count++;
 		}
-		if(count == TIME_OUT)
-		{
-			if(this.answer.isEmpty())
-			{
+		if(count == TIME_OUT){
+			if(this.answer.isEmpty()){
 				waiting = false;
 				throw new NonReplyException("Time Out - No Reply");
 			}
 		}
 		waiting = false;
-		
+
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ArrayList res = new ArrayList<>(answer);
-        return res;
+		ListaAerolineas res = new ListaAerolineas(answer);
+		return res;
 	}
-	
+
+
 	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("videos.general.app1", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("aerolineas.general.D03", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
@@ -132,7 +122,7 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		txtMsg.setText(envelope);
 		topicPublisher.publish(txtMsg);
 	}
-	
+
 	@Override
 	public void onMessage(Message message) 
 	{
@@ -151,18 +141,19 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 				if(ex.getStatus().equals(REQUEST))
 				{
 					VuelAndesDistributed dtm = VuelAndesDistributed.getInstance();
-					ListaVuelos viajes = dtm.getLocalVuelos();
-					String payload = mapper.writeValueAsString(viajes);
-					Topic t = new RMQDestination("", "reservas.test", ex.getRoutingKey(), "", false);
+
+					ListaAerolineas aerolineas = dtm.getLocalAerolineas();
+					String payload = mapper.writeValueAsString(aerolineas);
+					Topic t = new RMQDestination("", "aerolineas.test", ex.getRoutingKey(), "");
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
-					ArrayList v = mapper.readValue(ex.getPayload(), ArrayList.class);
-					answer.addAll(v);
+					ListaAerolineas v = mapper.readValue(ex.getPayload(), ListaAerolineas.class);
+					answer.addAll(v.getAerolineas());
 				}
 			}
-			
+
 		} 
 		catch (JMSException e) 
 		{
@@ -172,19 +163,18 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		{
 			e.printStackTrace();
 		} 
-		catch (JsonMappingException e)
+		catch (JsonMappingException e) 
 		{
 			e.printStackTrace();
 		} 
 		catch (IOException e) 
 		{
 			e.printStackTrace();
-		} 
-		catch (Exception e) 
+		} catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
@@ -192,5 +182,4 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 	{
 		System.out.println(exception);
 	}
-
 }

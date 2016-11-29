@@ -319,7 +319,7 @@ public class VuelAndesVuelosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getVuelosRFC12(@javax.ws.rs.PathParam("FechaI") Date FechaI, @javax.ws.rs.PathParam("FechaF") Date FechaF) {
 		VuelAndesMaster tm = new VuelAndesMaster(getPath());
-		ListaVuelosMsg vuelos;
+		ListaVuelos vuelos;
 		try {
 			if (FechaI==null||FechaF==null)
 				throw new Exception("Aeropuerto no válido");

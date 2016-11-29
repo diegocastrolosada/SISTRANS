@@ -4,12 +4,10 @@ import javax.jms.JMSException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 import dtm.VuelAndesDistributed;
 
 
-@WebListener
 public class ContextListener implements ServletContextListener 
 {
 

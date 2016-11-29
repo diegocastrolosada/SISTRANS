@@ -84,7 +84,7 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		topicConnection.close();
 	}
 	
-	public ArrayList<Vuelo> getVuelosRemote() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public ListaVuelos getRemoteVuelos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
@@ -113,7 +113,7 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ArrayList res = new ArrayList<>(answer);
+		ListaVuelos res = new ListaVuelos(answer);
         return res;
 	}
 	

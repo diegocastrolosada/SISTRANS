@@ -84,7 +84,7 @@ public class ClienteMDB implements MessageListener, ExceptionListener
 		topicConnection.close();
 	}
 	
-	public ArrayList<Cliente> getRemoteCliente() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public ListaClientes getRemoteCliente() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
@@ -113,7 +113,7 @@ public class ClienteMDB implements MessageListener, ExceptionListener
 		
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ArrayList res = new ArrayList<>(answer);
+		ListaClientes res = new ListaClientes(answer);
         return res;
 	}
 	

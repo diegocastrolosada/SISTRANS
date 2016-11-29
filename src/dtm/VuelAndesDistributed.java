@@ -22,8 +22,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
-import jms.AllVideosMDB;
+import jms.AerolineasMDB;
+import jms.ClienteMDB;
 import jms.NonReplyException;
+import jms.ReservasMDB;
+import jms.VuelosMDB;
 import tm.VuelAndesMaster;
 import vos.*;
 
@@ -36,11 +39,17 @@ public class VuelAndesDistributed
 	
 	private VuelAndesMaster tm;
 	
-//	private QueueConnectionFactory queueFactory;
-//	
-//	private TopicConnectionFactory factory;
-//	
-//	private AllVideosMDB allVideosMQ;
+	private QueueConnectionFactory queueFactory;
+	
+	private TopicConnectionFactory factory;
+	
+	private AerolineasMDB aerolineasMQ;
+	
+	private ClienteMDB clientesMQ;
+	
+	private VuelosMDB vuelosMQ;
+	
+	private ReservasMDB reservasMQ;
 	
 	private static String path;
 
@@ -48,23 +57,33 @@ public class VuelAndesDistributed
 	private VuelAndesDistributed() throws NamingException, JMSException
 	{
 		InitialContext ctx = new InitialContext();
-//		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-//		allVideosMQ = new AllVideosMDB(factory, ctx);
-//		
-//		allVideosMQ.start();
+		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
+		aerolineasMQ = new AerolineasMDB(factory, ctx);
+		clientesMQ = new ClienteMDB(factory, ctx);
+		vuelosMQ = new VuelosMDB(factory, ctx);
+		reservasMQ = new ReservasMDB(factory, ctx);
+		
+		aerolineasMQ.start();
+		clientesMQ.start();
+		vuelosMQ.start();
+		reservasMQ.start();
 		
 	}
 	
 	public void stop() throws JMSException
 	{
-//		allVideosMQ.close();
+		aerolineasMQ.close();
+		clientesMQ.close();
+		vuelosMQ.close();
+		reservasMQ.close();
 	}
 	
 	/**
 	 * Método que retorna el path de la carpeta WEB-INF/ConnectionData en el deploy actual dentro del servidor.
 	 * @return path de la carpeta WEB-INF/ConnectionData en el deploy actual.
 	 */
-	public static void setPath(String p) {
+	public static void setPath(String p) 
+	{
 		path = p;
 	}
 	
@@ -82,12 +101,16 @@ public class VuelAndesDistributed
 	{
 		if(instance == null)
 		{
-			try {
+			try 
+			{
 				instance = new VuelAndesDistributed();
-			} catch (NamingException e) {
+			} 
+			catch (NamingException e) 
+			{
 				e.printStackTrace();
-			} catch (JMSException e) {
-				// TODO Auto-generated catch block
+			} 
+			catch (JMSException e) 
+			{
 				e.printStackTrace();
 			}
 		}
@@ -171,9 +194,26 @@ public class VuelAndesDistributed
 	{
 		return tm.darVuelosPasajero();
 	}
-//	
-//	public ListaVideos getRemoteVideos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
-//	{
-//		return allVideosMQ.getRemoteVideos();
-//	}
+	
+	// Metodos Get Remote para cada atributo MQ de las MDB correspondiente
+	
+	public ListaAerolineas getRemoteAerolineas() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		return aerolineasMQ.getRemoteAerolineas();
+	}
+	
+	public ListaClientes getRemoteClientes() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		return clientesMQ.getRemoteCliente();
+	}
+	
+	public ListaVuelos getRemoteVuelos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		return vuelosMQ.getRemoteVuelos();
+	}
+	
+	public ListaReservas getRemoteReservas() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		return reservasMQ.getRemoteReservas();
+	}
 }

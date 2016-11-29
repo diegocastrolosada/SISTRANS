@@ -39,7 +39,6 @@ import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
-import vos2.*;
 import vos.*;
 
 
@@ -153,7 +152,7 @@ public class ClienteMDB implements MessageListener, ExceptionListener
 				{
 					VuelAndesDistributed dtm = VuelAndesDistributed.getInstance();
 					ListaClientes clientes = dtm.getLocalClientes();
-					String payload = mapper.writeValueAsString(reservas);
+					String payload = mapper.writeValueAsString(clientes);
 					Topic t = new RMQDestination("", "reservas.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}

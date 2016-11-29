@@ -39,7 +39,6 @@ import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
-import vos2.*;
 import vos.*;
 
 

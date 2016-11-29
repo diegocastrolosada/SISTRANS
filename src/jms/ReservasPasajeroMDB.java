@@ -40,7 +40,7 @@ import com.rabbitmq.jms.admin.RMQDestination;
 import dtm.VuelAndesDistributed;
 import vos.*;
 
-public class ReservasPasajeroMDB {
+public class ReservasPasajeroMDB implements MessageListener, ExceptionListener {
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
 	

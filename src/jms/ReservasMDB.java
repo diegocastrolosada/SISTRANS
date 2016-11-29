@@ -40,7 +40,7 @@ import com.rabbitmq.jms.admin.RMQDestination;
 import dtm.VuelAndesDistributed;
 import vos.*;
 
-public class ReservasMDB {
+public class ReservasMDB implements ExceptionListener, MessageListener {
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
 	
@@ -127,7 +127,6 @@ public class ReservasMDB {
 		topicPublisher.publish(txtMsg);
 	}
 	
-	@Override
 	public void onMessage(Message message) 
 	{
 		TextMessage txt = (TextMessage) message;
@@ -176,7 +175,6 @@ public class ReservasMDB {
 		
 	}
 
-	@Override
 	public void onException(JMSException exception) 
 	{
 		System.out.println(exception);

@@ -143,7 +143,7 @@ public class AerolineasMDB implements MessageListener, ExceptionListener
 
 					ListaAerolineas aerolineas = dtm.getLocalAerolineas();
 					String payload = mapper.writeValueAsString(aerolineas);
-					Topic t = new RMQDestination("", "aerolineas.test", ex.getRoutingKey(), "");
+					Topic t = new RMQDestination("", "aerolineas.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))

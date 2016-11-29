@@ -43,7 +43,7 @@ import vos2.*;
 import vos.*;
 
 
-public class VuelosMDB implements MessageListener, ExceptionListener 
+public class ClienteMDB implements MessageListener, ExceptionListener 
 {
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
@@ -59,9 +59,9 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private List<Vuelo> answer = new ArrayList<Vuelo>();
+	private List<Cliente> answer = new ArrayList<Cliente>();
 	
-	public VuelosMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+	public ClienteMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -85,7 +85,7 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		topicConnection.close();
 	}
 	
-	public ArrayList<Vuelo> getVuelosRemote() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public ArrayList<Cliente> getRemoteCliente() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
@@ -117,6 +117,7 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		ArrayList res = new ArrayList<>(answer);
         return res;
 	}
+	
 	
 	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
@@ -151,8 +152,8 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 				if(ex.getStatus().equals(REQUEST))
 				{
 					VuelAndesDistributed dtm = VuelAndesDistributed.getInstance();
-					ListaVuelos viajes = dtm.getLocalVuelos();
-					String payload = mapper.writeValueAsString(viajes);
+					ListaClientes clientes = dtm.getLocalClientes();
+					String payload = mapper.writeValueAsString(reservas);
 					Topic t = new RMQDestination("", "reservas.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
@@ -168,11 +169,12 @@ public class VuelosMDB implements MessageListener, ExceptionListener
 		{
 			e.printStackTrace();
 		} 
-		catch (JsonParseException e)
+		catch (JsonParseException e) 
 		{
+			
 			e.printStackTrace();
 		} 
-		catch (JsonMappingException e)
+		catch (JsonMappingException e) 
 		{
 			e.printStackTrace();
 		} 

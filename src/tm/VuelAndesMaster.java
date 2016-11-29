@@ -4383,7 +4383,7 @@ public class VuelAndesMaster {
 		}
 		return r;
 	}
-	public ListaVuelos darVuelosRFC11Local(String idAeropuerto) throws Exception 
+	public ListaVuelosMsg darVuelosRFC11Local(String idAeropuerto) throws Exception 
 	{
 		ArrayList<VueloMsg> vuelos;
 		DAOVuelos daoVuelos = new DAOVuelos();

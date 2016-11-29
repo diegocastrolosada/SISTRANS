@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 import vos.Vuelo;
+import vos2.ListaVuelosMsg;
 import vos2.VueloMsg;
 
 public class DAOVuelos {
@@ -93,6 +94,7 @@ public class DAOVuelos {
 			String destino = rs.getString("DESTINO");
 			vuelos.add(new Vuelo(id, horaSalida, horaLlegada, duracion, distancia, frecuencia, tipo, aeronave, aerolinea, origen, destino));
 		}
+
 		return vuelos;
 	}
 

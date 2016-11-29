@@ -1,6 +1,8 @@
 package tm;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,7 +10,14 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+
 import dao.*;
+import dtm.VuelAndesDistributed;
+import jms.NonReplyException;
 import vos.*;
 import vos2.ListaVuelosMsg;
 import vos2.VueloMsg;
@@ -47,6 +56,8 @@ public class VuelAndesMaster {
 	 * Conexión a la base de datos
 	 */
 	private Connection conn;
+	
+	private VuelAndesDistributed dtm;
 	/**
 	 * Método constructor de la clase VideoAndesMaster, esta clase modela y contiene cada una de las 
 	 * transacciones y la logia de negocios que estas conllevan.
@@ -4357,7 +4368,22 @@ public class VuelAndesMaster {
 		return new ListaVuelos(vuelos);
 	}
 	
-	public ListaVuelosMsg darVuelosRFC11(String idAeropuerto) throws Exception 
+	public ListaVuelos darVuelosRFC11(String idAeropuerto) throws Exception
+	{
+		ListaVuelos r = dtm.getLocalVuelos();
+		try
+		{
+			ListaVuelos resp = dtm.getRemoteVuelos();
+			r.getVuelos().addAll(resp.getVuelos());
+			
+		}
+		catch(NonReplyException e)
+		{
+			
+		}
+		return r;
+	}
+	public ListaVuelos darVuelosRFC11Local(String idAeropuerto) throws Exception 
 	{
 		ArrayList<VueloMsg> vuelos;
 		DAOVuelos daoVuelos = new DAOVuelos();

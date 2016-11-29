@@ -41,6 +41,8 @@ import com.rabbitmq.jms.admin.RMQDestination;
 import dtm.VuelAndesDistributed;
 import vos.*;
 import vos2.ExchangeMsg;
+import vos2.ListaVuelosMsg;
+import vos2.VueloMsg;
 
 
 public class VuelosMDB implements MessageListener, ExceptionListener 

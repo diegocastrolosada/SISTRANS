@@ -29,6 +29,7 @@ import jms.ReservasMDB;
 import jms.VuelosMDB;
 import tm.VuelAndesMaster;
 import vos.*;
+import vos2.ListaVuelosMsg;
 
 public class VuelAndesDistributed 
 {

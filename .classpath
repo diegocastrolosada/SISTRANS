@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.ws.rs.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.ejb3.classpathContainer/WildFly  8.x"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ojdbc6.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

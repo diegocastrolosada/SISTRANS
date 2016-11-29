@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import dao.*;
 import vos.*;
+import vos2.ListaVuelosMsg;
+import vos2.VueloMsg;
 public class VuelAndesMaster {
 	/**
 	 * Atributo estático que contiene el path relativo del archivo que tiene los datos de la conexión
@@ -4354,6 +4356,40 @@ public class VuelAndesMaster {
 		}
 		return new ListaVuelos(vuelos);
 	}
+	
+	public ListaVuelosMsg darVuelosRFC11(String idAeropuerto) throws Exception 
+	{
+		ArrayList<VueloMsg> vuelos;
+		DAOVuelos daoVuelos = new DAOVuelos();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoVuelos.setConn(conn);
+			vuelos = daoVuelos.RFC11(idAeropuerto);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoVuelos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return new ListaVuelosMsg(vuelos);
+	}
+	
 	
 	public void promoverUsuario(int id) throws SQLException{
 		DAOViajeros daoViajeros = new DAOViajeros();

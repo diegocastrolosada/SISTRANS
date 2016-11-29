@@ -296,5 +296,21 @@ public class VuelAndesVuelosServices {
 		}
 		return Response.status(200).entity(vuelos).build();
 	}
+	@GET
+	@Path("/aeropuerto/{idAeropuerto}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getVuelosRFC11(@javax.ws.rs.PathParam("idAeropuerto") String idAeropuerto) {
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		ListaVuelos vuelos;
+		try {
+			if (idAeropuerto==null)
+				throw new Exception("Aeropuerto no válido");
+			vuelos = tm.darVuelosRFC11(idAeropuerto);
+		} catch (Exception e) 
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(vuelos).build();
+	}
 }
 

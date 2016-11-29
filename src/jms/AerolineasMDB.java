@@ -33,6 +33,7 @@ import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
 import vos.*;
+import vos2.ExchangeMsg;
 
 public class AerolineasMDB implements MessageListener, ExceptionListener
 {

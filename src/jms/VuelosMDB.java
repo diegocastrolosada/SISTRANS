@@ -40,6 +40,7 @@ import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
 import vos.*;
+import vos2.ExchangeMsg;
 
 
 public class VuelosMDB implements MessageListener, ExceptionListener 

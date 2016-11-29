@@ -39,6 +39,7 @@ import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.VuelAndesDistributed;
 import vos.*;
+import vos2.ExchangeMsg;
 
 public class ReservasPasajeroMDB implements MessageListener, ExceptionListener {
 	public final static int TIME_OUT = 5;

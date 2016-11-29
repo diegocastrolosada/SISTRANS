@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 import vos.Vuelo;
+import vos2.VueloMsg;
 
 public class DAOVuelos {
 	/**
@@ -321,7 +322,7 @@ public class DAOVuelos {
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 		String sql2 = "DROP INDEX rfc7";
-		String sql3 = "DRO INDEX rfc71";
+		String sql3 = "DROP INDEX rfc71";
 		while (rs.next()) 
 		{
 			String id = rs.getString("ID");
@@ -429,4 +430,33 @@ public class DAOVuelos {
 		
 		return vuelos;
 	}
+	
+	
+	public ArrayList<VueloMsg> RFC11(String idAeropuerto)throws SQLException,Exception
+	{
+		ArrayList<VueloMsg> vuelos = new ArrayList<VueloMsg>();
+		String sql = "SELECT * FROM ISIS2304A091620.AEROPUERTOS a INNER JOIN ISIS2304A091620.VUELOS b ON a.CODIGO = b.ORIGEN OR a.CODIGO = b.DESTINO WHERE a.CODIGO = "+idAeropuerto;
+				
+	    /** Agrega los vuelos origen y destino del aeropuerto a la lista*/
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) 
+		{
+			String id = rs.getString("ID");
+			double duracion = rs.getDouble("DURACION");
+			double distancia = rs.getDouble("DISTANCIA");
+			int frecuencia = rs.getInt("FRECUENCIA");
+			String tipo = rs.getString("TIPO");
+			int aeronave2 = rs.getInt("AERONAVE");
+			String aerolinea2 = rs.getString("AEROLINEA");
+			String origen = rs.getString("ORIGEN");
+			String destino = rs.getString("DESTINO");
+			vuelos.add(new VueloMsg(id,duracion, distancia, frecuencia, tipo, aeronave2, aerolinea2, origen, destino));
+		}
+		
+		return vuelos;
+	}
+	
+	
 }

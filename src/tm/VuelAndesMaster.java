@@ -4416,6 +4416,39 @@ public class VuelAndesMaster {
 		return new ListaVuelosMsg(vuelos);
 	}
 	
+	public ListaVuelosMsg darVuelosRFC12Local(Date FechaI, Date FechaF) throws Exception 
+	{
+		ArrayList<VueloMsg> vuelos;
+		DAOVuelos daoVuelos = new DAOVuelos();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoVuelos.setConn(conn);
+			vuelos = daoVuelos.RFC12(FechaI, FechaF);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoVuelos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return new ListaVuelosMsg(vuelos);
+	}
+	
 	
 	public void promoverUsuario(int id) throws SQLException{
 		DAOViajeros daoViajeros = new DAOViajeros();
@@ -4445,5 +4478,20 @@ public class VuelAndesMaster {
 				throw exception;
 			}
 		}
+	}
+	public ListaVuelos darVuelosRFC12(Date FechaI, Date FechaF) throws Exception
+	{
+		ListaVuelos r = dtm.getLocalVuelos();
+		try
+		{
+			ListaVuelos resp = dtm.getRemoteVuelos();
+			r.getVuelos().addAll(resp.getVuelos());
+			
+		}
+		catch(NonReplyException e)
+		{
+			
+		}
+		return r;
 	}
 }

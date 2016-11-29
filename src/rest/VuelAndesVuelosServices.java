@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import tm.VuelAndesMaster;
 import vos.ListaVuelos;
 import vos.Vuelo;
+import vos2.ListaVuelosMsg;
 
 @Path("vuelos")
 public class VuelAndesVuelosServices {
@@ -306,6 +307,23 @@ public class VuelAndesVuelosServices {
 			if (idAeropuerto==null)
 				throw new Exception("Aeropuerto no válido");
 			vuelos = tm.darVuelosRFC11(idAeropuerto);
+		} catch (Exception e) 
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(vuelos).build();
+	}
+	
+	@GET
+	@Path("/FechaInicial/{FechaI}/FechaFinal/{FechaF}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getVuelosRFC12(@javax.ws.rs.PathParam("FechaI") Date FechaI, @javax.ws.rs.PathParam("FechaF") Date FechaF) {
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		ListaVuelosMsg vuelos;
+		try {
+			if (FechaI==null||FechaF==null)
+				throw new Exception("Aeropuerto no válido");
+			vuelos = tm.darVuelosRFC12(FechaI, FechaF);
 		} catch (Exception e) 
 		{
 			return Response.status(500).entity(doErrorMessage(e)).build();

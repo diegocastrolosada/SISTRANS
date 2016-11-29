@@ -459,6 +459,34 @@ public class DAOVuelos {
 		
 		return vuelos;
 	}
+		
+		public ArrayList<VueloMsg> RFC12(Date FechaI, Date FechaF)throws SQLException,Exception
+		{
+			ArrayList<VueloMsg> vuelos = new ArrayList<VueloMsg>();
+			String sql = "SELECT VUELOS.*,a.CAPACIDAD,b.VALOR FROM VUELOS,(SELECT VUELOS.*,VUELOS_CARGA.CAPACIDAD FROM VUELOS JOIN VUELOS_CARGA ON VUELOS.ID = VUELOS_CARGA.ID AND HORA_LLEGADA BETWEEN" + FechaI + "AND" + FechaF +")a,(SELECT VUELOS.*,d.PRECIo as VALOR FROM VUELOS JOIN (SELECT VUELO,PRECIO FROM VUELOS_PASAJERO,RESERVAS_VIAJERO WHERE RESERVAS_VIAJERO.VUELO=VUELOS_PASAJERO.ID)d on VUELOS.ID=d.VUELO where HORA_LLEGADA BETWEEN" + FechaI + "AND" + FechaF +")b";
+					
+		  
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while (rs.next()) 
+			{
+				String id = rs.getString("ID");
+				double duracion = rs.getDouble("DURACION");
+				double distancia = rs.getDouble("DISTANCIA");
+				int frecuencia = rs.getInt("FRECUENCIA");
+				String tipo = rs.getString("TIPO");
+				int aeronave2 = rs.getInt("AERONAVE");
+				String aerolinea2 = rs.getString("AEROLINEA");
+				String origen = rs.getString("ORIGEN");
+				String destino = rs.getString("DESTINO");
+				vuelos.add(new VueloMsg(id,duracion, distancia, frecuencia, tipo, aeronave2, aerolinea2, origen, destino));
+			}
+			
+			return vuelos;
+		
+		
+	}
 	
 	
 }

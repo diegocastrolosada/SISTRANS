@@ -4354,5 +4354,34 @@ public class VuelAndesMaster {
 		}
 		return new ListaVuelos(vuelos);
 	}
+	
+	public void promoverUsuario(int id) throws SQLException{
+		DAOViajeros daoViajeros = new DAOViajeros();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoViajeros.setConn(conn);
+			daoViajeros.rf18(id); 
 
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoViajeros.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
 }

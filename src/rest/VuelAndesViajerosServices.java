@@ -104,7 +104,19 @@ public class VuelAndesViajerosServices {
 		}
 		return Response.status(200).entity(viajero).build();
 	}
-	
+	@PUT
+	@Path("/promover/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response promoverViajero(@javax.ws.rs.PathParam("id") int id) {
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		try {
+			tm.promoverUsuario(id);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(id).build();
+	}
     /**
      * Método que expone servicio REST usando PUT que agrega los videos que recibe en Json
      * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos/videos

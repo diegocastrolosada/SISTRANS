@@ -203,4 +203,11 @@ public class DAOViajeros {
 		recursos.add(prepStmt2);
 		prepStmt2.executeQuery();
 	}
+	
+	public void rf18(int id) throws SQLException{
+		String sql = "UPDATE ISIS2304A091620.VIAJEROS SET FRECUENTE='SI' WHERE ID = "+id+" AND (SELECT SUM(VUELOS.DISTANCIA) FROM (SELECT * FROM ISIS2304A091620.VIAJEROS JOIN ISIS2304A091620.RESERVAS ON RESERVAS.CLIENTE=VIAJEROS.ID where VIAJEROS.ID="+id+")a JOIN VUELOS ON VUELOS.ID=a.VUELO GROUP BY a.cliente)>150000";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+	}
 }
